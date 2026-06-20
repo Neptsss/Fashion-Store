@@ -6,12 +6,10 @@ class Home extends Controller
     public function index($nama = 'Noval', $pekerjaan = "Mahasiswa")
     {
         $this->view('templates/header',[
-            'judul' => "Home"
+            'judul' => "Home | Stellar & Co"
         ]);
-        $this->view('landing', [
-            "nama" => $this->model('User')->getAllUser(),
-            "pekerjaan" => $pekerjaan,
-        ]);
+        $this->view('partials/navbar');
+        $this->view('landing');
         $this->view('templates/footer');
     }
 }
