@@ -4,14 +4,12 @@
                 <a href="#" class="nav-title">Stellar & Co.</a>
                 <ul class="nav-menu">
                     <li>
-                        <a href="" class="active">Men</a>
+                        <a href="" class="active">Home</a>
                     </li>
                     <li>
-                        <a href="">Women</a>
+                        <a href="">Products</a>
                     </li>
-                    <li>
-                        <a href="">Kids</a>
-                    </li>
+                   
                 </ul>
             </div>
             <div class="nav-container">

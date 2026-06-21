@@ -3,7 +3,7 @@
 
 class Home extends Controller
 {
-    public function index($nama = 'Noval', $pekerjaan = "Mahasiswa")
+    public function index()
     {
         $this->view('templates/header',[
             'judul' => "Home | Stellar & Co"

@@ -1,3 +1,4 @@
+<?php if(empty($_GET)) :?>
 <footer>
     <p class="footer-title">Stellar & Co.</p>
     <p class="footer-desc">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
@@ -21,6 +22,7 @@
 
 </footer>
 <p class="copy">&copy; 2026 Stellar & Co. All Rights Reserved.</p>
+<?php endif; ?>
 <script src="<?= BASE_URL; ?>/assets/js/main.js"></script>
 
 </body>
