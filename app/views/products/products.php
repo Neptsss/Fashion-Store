@@ -83,7 +83,7 @@
                 Kami tidak dapat menemukan produk yang sesuai dengan pencarian
                 "<b><?= htmlspecialchars($_GET['keyword']) ?></b>".
             </p>
-            <a href="<?= BASE_URL ?>/produk" class="btn-empty">
+            <a href="<?= BASE_URL ?>/product" class="btn-empty">
                 Kembali
             </a>
         </div>
