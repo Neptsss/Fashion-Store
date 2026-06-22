@@ -22,7 +22,7 @@
                 <form action="" method="get">
                     <div class="input-icon">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search Collection" class="input-control">
+                        <input type="text" name="keyword" placeholder="Search Collection" class="input-control" value="<?= (isset($_GET['keyword'])) ? $_GET['keyword'] : ''; ?>">
                     </div>
                 </form>
                 <div class="nav-menu">
