@@ -39,7 +39,7 @@
                     <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, voluptatem!!</p>
                     <hr>
                     <div class="btn-card">
-                        <a href="">Product Detail</a>
+                        <a href="<?= BASE_URL . '/detail/1'; ?>">Product Detail</a>
                     </div>
                 </div>
             </div>

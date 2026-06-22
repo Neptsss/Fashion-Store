@@ -1,11 +1,35 @@
 <?php
+
+namespace App\Controllers;
+
+use App\Core\Controller;
 class UserController extends Controller
 {
-    public function profile()
+    private $userModel;
+
+    public function __construct()
     {
-        $this->view('templates/header', ['judul' => 'Profile | Stellar & Co.']);
+        $this->userModel = $this->model('user');
+    }
+    public function index($username = null)
+    {
+        $user = $this->userModel->getUserByUsername($username);
+
+        if (!$user) {
+            header('Location: ' . BASE_URL . '/');
+            exit;
+        }
+
+        $this->view('templates/header', [
+            'judul' => 'Profile | ' . $user['nama_lengkap'] 
+        ]);
+        
         $this->view('partials/navbar');
-        $this->view('pembeli/profile');
+
+        $this->view('pembeli/profile', [
+            'user' => $user
+        ]);
+
         $this->view('templates/footer');
     }
 

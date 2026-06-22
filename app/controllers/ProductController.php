@@ -1,5 +1,8 @@
-<?php 
+<?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
 class ProductController extends Controller{
     public function index(){
         $this->view('templates/header', ['judul'=>"Products | Stellar & Co."]);

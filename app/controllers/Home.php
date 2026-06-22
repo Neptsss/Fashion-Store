@@ -1,10 +1,14 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
 
 class Home extends Controller
 {
-    public function index()
+    public function index($id =null)
     {
+       
         $this->view('templates/header',[
             'judul' => "Home | Stellar & Co"
         ]);

@@ -4,12 +4,11 @@
         <div class="profile-sidebar">
             <div class="profile-card">
                 <div class="profile-photo-container">
-                    <img src="https://ui-avatars.com/api/?name=Noval+Putra+Asmara&background=0652d6&color=fff&size=150" alt="Foto Profil" class="profile-img">
+                    <img src="https://ui-avatars.com/api/?name=<?= htmlspecialchars($user['nama_lengkap'], ENT_QUOTES, 'UTF-8'); ?>&background=0652d6&color=fff&size=150" alt="Foto Profil" class="profile-img">
                     <button class="btn-edit-photo"><i class="bi bi-camera-fill"></i></button>
                 </div>
-
-                <h3 class="profile-name">Noval Putra Asmara</h3>
-                <p class="profile-username">@Neptsss</p>
+                <h3 class="profile-name"><?= htmlspecialchars($user['nama_lengkap'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <p class="profile-username">@<?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8');; ?></p>
 
                 <hr class="divider">
 
@@ -31,24 +30,23 @@
                 <div class="info-grid">
                     <div class="info-group">
                         <label>Nama Lengkap</label>
-                        <p class="info-text">Noval Putra Asmara</p>
+                        <p class="info-text"><?= htmlspecialchars($user['nama_lengkap'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
 
                     <div class="info-group">
                         <label>Username</label>
-                        <p class="info-text">Neptsss</p>
+                        <p class="info-text"><?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
 
                     <div class="info-group">
                         <label>Nomor Telepon</label>
-                        <p class="info-text">0812-3456-7890</p>
+                        <p class="info-text"><?= htmlspecialchars($user['telp'] ?? '-', ENT_QUOTES, 'UTF-8'); ?></p>
                     </div>
 
                     <div class="info-group address-group">
                         <label>Alamat Pengiriman Utama</label>
                         <p class="info-text address-text">
-                           Jl aman sentosa<br>
-                            Kabupaten Bantul, Daerah Istimewa Yogyakarta 
+                            <?= htmlspecialchars($user['alamat']??'-', ENT_QUOTES, 'UTF-8'); ?>
                         </p>
                     </div>
                 </div>

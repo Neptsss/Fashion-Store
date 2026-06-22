@@ -1,11 +1,12 @@
 <div class="auth-wrapper">
+    <?php App\Core\Flasher::flash(); ?>
     <div class="auth-card" style="max-width: 500px;">
         <div class="auth-header">
             <h2>Buat Akun Baru</h2>
             <p>Bergabunglah dengan Stellar & Co. untuk pengalaman belanja terbaik.</p>
         </div>
 
-        <form action="proses_register.php" method="POST">
+        <form action="<?= BASE_URL . '/register'; ?>" method="POST">
 
             <div class="form-row">
                 <div class="form-group">
@@ -47,7 +48,7 @@
         </form>
 
         <div class="auth-footer">
-            <p>Sudah punya akun? <a href="login.php">Masuk di sini</a></p>
+            <p>Sudah punya akun? <a href="<?= BASE_URL.'/login'; ?>">Masuk di sini</a></p>
         </div>
 
     </div>
