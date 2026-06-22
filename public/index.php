@@ -1,4 +1,9 @@
-<?php 
+<?php
 
 require_once '../app/init.php';
-$app = new App;
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$app = new Web();
+$app->run();

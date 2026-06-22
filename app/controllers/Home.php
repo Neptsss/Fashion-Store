@@ -1,17 +1,19 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Core\Controller;
 
 class Home extends Controller
 {
-    public function index($nama = 'Noval', $pekerjaan = "Mahasiswa")
+    public function index($id =null)
     {
+       
         $this->view('templates/header',[
-            'judul' => "Home"
+            'judul' => "Home | Stellar & Co"
         ]);
-        $this->view('landing', [
-            "nama" => $this->model('User')->getAllUser(),
-            "pekerjaan" => $pekerjaan,
-        ]);
+        $this->view('partials/navbar');
+        $this->view('landing');
         $this->view('templates/footer');
     }
 }
