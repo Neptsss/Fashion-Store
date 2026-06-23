@@ -1,8 +1,8 @@
 <div class="container checkout-page">
     <div class="bread-crumbs">
         <ul class="bread-crumbs-menu">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Products</a></li>
+            <li><a href="<?= BASE_URL; ?>">Home</a></li>
+            <li><a href="<?= BASE_URL . '/products'; ?>">Products</a></li>
             <li><a href="#" class="active">Checkout</a></li>
         </ul>
     </div>
@@ -44,9 +44,9 @@
                 <div class="summary-item">
                     <img src="https://picsum.photos/100/100" alt="Produk" class="summary-img">
                     <div class="summary-detail">
-                        <h4>Product name</h4>
-                        <p class="summary-var">Ukuran: L | Qty: 1</p>
-                        <p class="summary-price">Rp 250.000</p>
+                        <h4><?= htmlspecialchars($produk['nama']); ?></h4>
+                        <p class="summary-var">Ukuran: L | Qty: 2</p>
+                        <p class="summary-price"><?= htmlspecialchars(number_format($produk['harga'], 0, ',','.')); ?></p>
                     </div>
                 </div>
 
@@ -55,7 +55,7 @@
                 <div class="summary-calc">
                     <div class="calc-row">
                         <span>Subtotal</span>
-                        <span>Rp 250.000</span>
+                        <span>Rp <?= htmlspecialchars(number_format(($produk['harga'] * 2), 0, ',','.')); ?></span>
                     </div>
                     <div class="calc-row">
                         <span>Ongkos Kirim</span>
@@ -63,7 +63,7 @@
                     </div>
                     <div class="calc-row total-row">
                         <span>Total Pembayaran</span>
-                        <span>Rp 265.000</span>
+                        <span>Rp <?= htmlspecialchars(number_format(($produk['harga'] * 2 + 15000), 0, ',','.')); ?></span>
                     </div>
                 </div>
 

@@ -13,16 +13,12 @@ class Web extends Route{
         $this->get('/', [Home::class, 'index']);
 
         // Authentication
-        $this->get('/login',[Authentication::class, 'index']);
-        $this->post('/login',[Authentication::class, 'login']);
+       
 
-        $this->get('/register',[Authentication::class,'register']);
-        $this->post('/register',[Authentication::class,'userRegister']);
-        
-        $this->get('/logout', [Authentication::class, 'logout']);
-
+        // Product
         $this->get('/products',[ProductController::class,'index']);
         $this->get('/detail/{id}',[ProductController::class, 'detail']);
+        $this->get('/checkout-product/{id}/{qty}',[ProductController::class,'checkout']);
 
         // user
         $this->get('/profile/{username}',[UserController::class,'index']);

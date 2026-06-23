@@ -7,7 +7,7 @@
             <p class="hero-desc">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste recusandae laborum culpa, odit beatae quibusdam incidunt! Molestias debitis harum natus? Officia distinctio alias obcaecati porro minima molestiae, odit mollitia non!
             </p>
-            <a href="<?= BASE_URL.'/products'; ?>" class="btn btn-primary">Belanja Sekarang</a>
+            <a href="<?= BASE_URL . '/products'; ?>" class="btn btn-primary">Belanja Sekarang</a>
         </div>
         <div class="hero-image">
             <img src="https://picsum.photos/400">
@@ -28,50 +28,26 @@
         </div>
     </div>
     <div class="container">
-        <h2 class="section-title product">Trending Product</h2>
+        <h2 class="section-title product">New Product</h2>
+
         <div class="container card-container">
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, voluptatem!!</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
+            <?php foreach ($produk as $item) : ?>
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://picsum.photos/300">
+                    </div>
+                    <div class="card-body">
+                        <p class="card-title"><?= $item['nama']; ?></p>
+                        <p class="card-subtitle">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></p>
+                        <p class="card-desc"><?= strlen($item['deskripsi']) > 50 ? substr($item['deskripsi'], 0, 50) . '...' : $item['deskripsi']; ?></p>
+                        <hr>
+                        <div class="btn-card">
+                            <a href="<?= BASE_URL . '/' . $item['id']; ?>">Product Detail</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Officia, iure.</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, enim?!</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
-                    </div>
-                </div>
-            </div>
-            <a href="" class="btn btn-primary">See More</a>
+            <?php endforeach; ?>
+
         </div>
+        <a href="" class="btn btn-primary">See More</a>
     </div>

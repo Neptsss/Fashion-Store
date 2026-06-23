@@ -34,11 +34,13 @@ class ProductController extends Controller
         $this->view('templates/footer');
     }
 
-    public function checkout()
+    public function checkout($id, $qty)
     {
+        $produk = $this->model('produk')->getProdukById($id);
+        
         $this->view('templates/header', ['judul' => "Checkout Product | Stellar & Co."]);
         $this->view('partials/navbar');
-        $this->view('products/checkout');
+        $this->view('products/checkout', ["produk" => $produk, "qty" => $qty]);
         $this->view('templates/footer');
     }
 
