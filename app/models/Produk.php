@@ -16,6 +16,14 @@ class Produk
         return $this->db->resultSet();
     }
 
+    public function getProdukLimit($limit = 5)
+    {
+        $this->db->query('SELECT * FROM ' . $this->table . ' LIMIT :limit');
+        $this->db->bind(':limit', $limit);
+
+        return $this->db->resultSet();
+    }
+
     public function getProdukById($id)
     {
         $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id = :id');
