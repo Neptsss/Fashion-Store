@@ -69,4 +69,20 @@ class Database
         $this->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Mengambil ID dari record yang baru di-insert
+     */
+    public function lastInsertId()
+    {
+        return $this->dbh->lastInsertId();
+    }
+
+    /**
+     * Mengambil jumlah rows yang terkena pengaruh query terakhir
+     */
+    public function rowCount()
+    {
+        return $this->stmt->rowCount();
+    }
 }

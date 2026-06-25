@@ -1,77 +1,74 @@
     <?php App\Core\Flasher::flash(); ?>
 
+    <!-- Hero Section -->
     <div class="hero">
         <div class="hero-body">
-            <p class="hero-text">Lorem ipsum dolor sit amet.</p>
-            <h1 class="hero-title">Academic Exellence In Every Stitch</h1>
+            <p class="hero-text">Koleksi Terbaru Kami</p>
+            <h1 class="hero-title">Academic Excellence In Every Stitch</h1>
             <p class="hero-desc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste recusandae laborum culpa, odit beatae quibusdam incidunt! Molestias debitis harum natus? Officia distinctio alias obcaecati porro minima molestiae, odit mollitia non!
+                Temukan produk berkualitas tinggi yang sempurna untuk kebutuhan akademis dan gaya hidup Anda. Dengan desain modern dan bahan premium, kami siap mendampingi setiap momen berhargamu.
             </p>
-            <a href="<?= BASE_URL.'/products'; ?>" class="btn btn-primary">Belanja Sekarang</a>
+            <a href="<?= BASE_URL . '/products'; ?>" class="btn btn-primary">Belanja Sekarang</a>
         </div>
         <div class="hero-image">
-            <img src="https://picsum.photos/400">
+            <img src="https://picsum.photos/500/400?random=1" alt="Hero Product">
         </div>
     </div>
-    <div class="container">
-        <h2 class="section-title">Categories</h2>
+
+    <!-- Categories Section -->
+    <div class="container" style="background: linear-gradient(135deg, rgba(6, 82, 214, 0.05) 0%, rgba(175, 201, 255, 0.1) 100%); border-radius: 15px; margin-top: 50px;">
+        <h2 class="section-title" style="text-align: center; margin-bottom: 30px;">Jelajahi Kategori</h2>
         <div class="kategori">
-            <a href="#" class="kategori-badge shirt">
+            <a href="<?= BASE_URL . '/products?kategori=1'; ?>" class="kategori-badge shirt">
                 T-Shirt
             </a>
-            <a href="#" class="kategori-badge hat">
-                Hat
+            <a href="<?= BASE_URL . '/products?kategori=2'; ?>" class="kategori-badge hat">
+               Hat
             </a>
-            <a href="#" class="kategori-badge jeans">
+            <a href="<?= BASE_URL . '/products?kategori=3'; ?>" class="kategori-badge jeans">
                 Jeans
             </a>
         </div>
     </div>
-    <div class="container">
-        <h2 class="section-title product">Trending Product</h2>
-        <div class="container card-container">
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit, voluptatem!!</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Officia, iure.</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-image">
-                    <img src="https://picsum.photos/300">
-                </div>
-                <div class="card-body">
-                    <p class="card-title">Product Name</p>
-                    <p class="card-subtitle">Rp 3.000.000</p>
-                    <p class="card-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, enim?!</p>
-                    <hr>
-                    <div class="btn-card">
-                        <a href="">Product Detail</a>
-                    </div>
-                </div>
-            </div>
-            <a href="" class="btn btn-primary">See More</a>
+
+<div class="container" style="padding-top: 60px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+            <h2 class="section-title product">Produk Terbaru</h2>
+            <a href="<?= BASE_URL . '/products'; ?>" style="color: var(--primary-color); text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
+                Lihat Semua →
+            </a>
+        </div>
+
+        <div class="card-container">
+            <?php if (!empty($produk)) : ?>
+                <?php $count = 0; ?>
+                <?php foreach ($produk as $item) : ?>
+                    <?php if ($count < 6) : ?>
+                        <div class="card">
+                            <div class="card-image">
+                                <img src="https://picsum.photos/300/300?random=<?= $item['id']; ?>" alt="<?= $item['nama']; ?>">
+                            </div>
+                            <div class="card-body">
+                                <p class="card-title"><?= $item['nama']; ?></p>
+                                <p class="card-subtitle">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></p>
+                                <p cl   ass="card-desc"><?= strlen($item['deskripsi']) > 50 ? substr($item['deskripsi'], 0, 50) . '...' : $item['deskripsi']; ?></p>
+                                <hr>
+                                <div class="btn-card">
+                                    <a href="<?= BASE_URL . '/detail/' . $item['id']; ?>">Lihat Detail</a>
+                                </div>
+                            </div>
+                        </div>
+                        <?php $count++; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <p style="text-align: center; color: var(--text-secondary);">Belum ada produk tersedia</p>
+            <?php endif; ?>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="<?= BASE_URL . '/products'; ?>" class="btn btn-primary">Lihat Semua Produk</a>
         </div>
     </div>
+
+   
