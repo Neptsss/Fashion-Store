@@ -20,6 +20,11 @@ class UserController extends Controller
             exit;
         }
 
+        if (isset($_SESSION['role']) && $_SESSION['role'] === 'Penjual') {
+            header('Location: ' . BASE_URL . '/dashboard');
+            exit;
+        }
+
         $this->view('templates/header', [
             'judul' => 'Profile | ' . $user['nama_lengkap'] 
         ]);

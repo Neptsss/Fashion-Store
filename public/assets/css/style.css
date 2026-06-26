@@ -974,6 +974,12 @@ a.btn.btn-primary {
     box-shadow: var(--shadow-sm);
 }
 
+.header-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .content-header {
     margin-bottom: 30px;
     border-bottom: 1px solid #EAEFEF;
@@ -1524,6 +1530,22 @@ footer .sosmed-item a:hover {
 }
 
 .btn-empty:hover {
+    background-color: #6c519c;
+}
+
+.btn-logout {
+    width: fit-content;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #8864b7;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
     background-color: #6c519c;
 }
 
