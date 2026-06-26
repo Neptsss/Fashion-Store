@@ -6,14 +6,20 @@ use App\Core\Controller;
 
 class Home extends Controller
 {
-    public function index($id =null)
+    private $produkModel;
+    public function __construct()
     {
-       
-        $this->view('templates/header',[
+        $this->produkModel = $this->model('produk');
+    }
+    public function index($id = null)
+    {
+        $produk = $this->produkModel->getProdukLimit(6);
+
+        $this->view('templates/header', [
             'judul' => "Home | Stellar & Co"
         ]);
         $this->view('partials/navbar');
-        $this->view('landing');
+        $this->view('landing', ['produk' => $produk]);
         $this->view('templates/footer');
     }
 }

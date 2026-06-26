@@ -26,6 +26,7 @@
             <h2 class="content-title">Semua Produk</h2>
             <h4 class="content-subtitle">Showing <?= count($data['produk']); ?> produk tersedia</h4>
         </div>
+
         <div class="container card-container">
             <?php if (!empty($data['produk'])): ?>
                 <?php foreach ($data['produk'] as $item) :  ?>
