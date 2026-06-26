@@ -41,7 +41,7 @@ class Kategori
         $this->db->query('INSERT INTO ' . $this->table . ' (nama) VALUES (:nama)');
         $this->db->bind('nama', $data['nama']);
         $this->db->execute();
-        return true;
+        return $this->db->rowCount();
     }
 
     public function updateKategori($id, $data)
@@ -58,6 +58,6 @@ class Kategori
         $this->db->query('DELETE FROM ' . $this->table . ' WHERE id=:id');
         $this->db->bind('id', $id);
         $this->db->execute();
-        return true;
+        return $this->db->rowCount();
     }
 }

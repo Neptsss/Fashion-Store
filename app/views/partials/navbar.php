@@ -33,12 +33,18 @@
         <div class="profile-menu" id="profile-menu">
             <ul class="profile-item">
                 <?php if (isset($_SESSION['username'])): ?>
-                    <li>
-                        <a href="<?= BASE_URL; ?>/profile/<?= $_SESSION['username']; ?>">Profile</a>
-                    </li>
-                    <li>
-                        <a href="">History</a>
-                    </li>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'Penjual'): ?>
+                        <li>
+                            <a href="<?= BASE_URL; ?>/dashboard">Dashboard</a>
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="<?= BASE_URL; ?>/profile/<?= $_SESSION['username']; ?>">Profile</a>
+                        </li>
+                        <li>
+                            <a href="">History</a>
+                        </li>
+                    <?php endif; ?>
                     <li>
                         <a href="<?= BASE_URL; ?>/logout" class="logout">Log out</a>
                     </li>

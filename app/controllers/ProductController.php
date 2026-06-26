@@ -3,22 +3,29 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Flasher;
+use App\Core\AuthMiddleware;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        AuthMiddleware::isPenjual();
+    }
+
     public function index()
     {
-        $data['judul'] = 'Daftar Produk | Stellar & Co.';
+        $data['judul'] = 'Product Inventory | Stellar & Co';
         if (isset($_GET['keyword'])) {
             $data['produk'] = $this->model('Produk')->searchProduk($_GET['keyword']);
         } else {
             $data['produk'] = $this->model('Produk')->getAllProduk();
         }
+        $data['kategori'] = $this->model('Kategori')->getAllKategori();
 
-        $this->view('templates/header', $data);
-        $this->view('partials/navbar');
-        $this->view('products/products', $data);
-        $this->view('templates/footer');
+        $this->view('penjual/layout/header', $data);
+        $this->view('penjual/produk/index', $data);
+        $this->view('penjual/layout/footer', $data);
     }
 
     public function detail($id = null)
@@ -36,8 +43,8 @@ class ProductController extends Controller
 
     public function checkout($id, $qty)
     {
-        $produk = $this->model('produk')->getProdukById($id);
-        
+        $produk = $this->model('Produk')->getProdukById($id);
+
         $this->view('templates/header', ['judul' => "Checkout Product | Stellar & Co."]);
         $this->view('partials/navbar');
         $this->view('products/checkout', ["produk" => $produk, "qty" => $qty]);
@@ -75,7 +82,7 @@ class ProductController extends Controller
         return $namaFileBaru;
     }
 
-    public function tambah()
+    public function store()
     {
         $gambar = $this->uploadImage();
         if (!$gambar) {
@@ -85,25 +92,38 @@ class ProductController extends Controller
         }
 
         if ($this->model('Produk')->createProduk($_POST) > 0) {
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Product successfully', 'created', 'success');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         } else {
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Failed to create', 'product', 'danger');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         }
     }
 
-    public function edit($id)
+    public function create()
     {
-        $data['produk'] = $this->model('Produk')->getProdukById($id);
-        $data['judul'] = 'Edit Produk | Stellar & Co.';
-        $this->view('templates/header', $data);
-        $this->view('partials/navbar');
-        $this->view('products/edit', $data);
-        $this->view('templates/footer');
+        $data['judul'] = 'Create New Product | Luxe Academy';
+        $data['kategori'] = $this->model('Kategori')->getAllKategori();
+
+        $this->view('penjual/layout/header', $data);
+        $this->view('penjual/produk/create', $data);
+        $this->view('penjual/layout/footer', $data);
     }
 
-    public function ubah()
+    public function edit($id)
+    {
+        $data['judul'] = 'Edit Product | Luxe Academy';
+        $data['kategori'] = $this->model('Kategori')->getAllKategori();
+        $data['produk'] = $this->model('Produk')->getProdukById($id);
+
+        $this->view('penjual/layout/header', $data);
+        $this->view('penjual/produk/edit', $data);
+        $this->view('penjual/layout/footer', $data);
+    }
+
+    public function update()
     {
         $produkLama = $this->model('Produk')->getProdukById($_POST['id']);
         $fotoLama = $produkLama['foto'];
@@ -125,15 +145,17 @@ class ProductController extends Controller
         $_POST['foto'] = $gambar;
 
         if ($this->model('Produk')->updateProduk($_POST['id'], $_POST) > 0) {
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Product successfully', 'updated', 'success');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         } else {
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Failed to update', 'product', 'danger');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         }
     }
 
-    public function hapus($id)
+    public function delete($id)
     {
         $produk = $this->model('Produk')->getProdukById($id);
         $path = __DIR__ . '/../../public/images/' . $produk['foto'];
@@ -142,10 +164,12 @@ class ProductController extends Controller
                 unlink($path);
             }
 
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Product successfully', 'deleted', 'success');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         } else {
-            header('Location: ' . BASE_URL . '/product');
+            Flasher::setFlash('Failed to delete', 'product', 'danger');
+            header('Location: ' . BASE_URL . '/dashboard/products');
             exit;
         }
     }
