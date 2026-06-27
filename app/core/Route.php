@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Core;
 
 class Route
@@ -10,16 +11,27 @@ class Route
         'GET' => [],
         'POST' => [],
     ];
+    private $middlewareMap = [
+        'auth' => [AuthMiddleware::class, 'auth'],
+        'pembeli' => [AuthMiddleware::class, 'isPembeli'],
+        'penjual' => [AuthMiddleware::class, 'isPenjual'],
+    ];
 
 
-    public function get($urlRoute, $option = [])
+    public function get($urlRoute, $option = [], $middleware = [])
     {
-        $this->routes['GET'][$urlRoute] = $option;
+        $this->routes['GET'][$urlRoute] = [
+            'action' => $option,
+            'middleware' => $middleware
+        ];
     }
 
-    public function post($urlRoute, $option = [])
+    public function post($urlRoute, $option = [], $middleware = [])
     {
-        $this->routes['POST'][$urlRoute] = $option;
+        $this->routes['POST'][$urlRoute] = [
+            'action' => $option,
+            'middleware' => $middleware
+        ];
     }
 
     public function run()
@@ -30,21 +42,30 @@ class Route
         $requestMethod = $_SERVER['REQUEST_METHOD'];
         $matched = false;
         if (isset($this->routes[$requestMethod])) {
-            foreach ($this->routes[$requestMethod] as $routeUrl => $option) {
+            foreach ($this->routes[$requestMethod] as $routeUrl => $route) {
+
+
                 $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([^/]+)', $routeUrl);
 
                 $pattern = '#^' . $pattern . '$#';
 
                 if (preg_match($pattern, $currentPath, $matches)) {
                     $matched = true;
-                    $controllerFull = $option[0];
-                    $method = $option[1];
+                    $controllerFull = $route['action'][0];
+                    $method         = $route['action'][1];
+                    $middlewares    = $route['middleware'];
 
                     $controllerParts = explode('\\', $controllerFull);
-                    $controllerName = end($controllerParts); 
+                    $controllerName = end($controllerParts);
 
                     if (file_exists('../app/controllers/' . $controllerName . '.php')) {
                         require_once '../app/controllers/' . $controllerName . '.php';
+
+                        foreach ($middlewares as $middleware) {
+                            if (isset($this->middlewareMap[$middleware])) {
+                                call_user_func($this->middlewareMap[$middleware]);
+                            }
+                        }
                         $this->controller = new $controllerFull;
 
                         if (method_exists($this->controller, $method)) {

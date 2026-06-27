@@ -1,1 +1,4 @@
 .env
+public/images/payments/*
+public/images/products/*
+public/images/users/*
