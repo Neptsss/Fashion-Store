@@ -101,6 +101,27 @@ body {
     align-items: center;
 }
 
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background-color: white;
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+}
+
 .sidebar-footer img {
     width: 40px;
     height: 40px;
@@ -125,6 +146,7 @@ body {
     margin-left: var(--sidebar-width);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* Topbar */
@@ -255,7 +277,7 @@ body {
 }
 
 .stat-card .value {
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 700;
     color: var(--text-main);
 }

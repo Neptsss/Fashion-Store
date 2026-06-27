@@ -115,7 +115,8 @@ class VarianProduk
     public function isStockAvailable($id, $quantity)
     {
         $varian = $this->getById($id);
-        return $varian && $varian->stok >= $quantity;
+       
+        return $varian && $varian['stok'] >= $quantity;
     }
 
     /**

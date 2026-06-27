@@ -15,6 +15,7 @@ class DashboardController extends Controller
     public function index()
     {
         $data['judul'] = 'Dashboard | Stellar & Co';
+        $data['activeMenu'] = 'dashboard';
         $dashboardModel = $this->model('DashboardModel');
         $data['stats'] = $dashboardModel->getStats();
         $data['chart_data'] = json_encode($dashboardModel->getSalesChart());

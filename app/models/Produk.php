@@ -15,7 +15,18 @@ class Produk
      */
     public function getAllProduk()
     {
-        $this->db->query('SELECT * FROM ' . $this->table . ' ORDER BY created_at DESC');
+        $this->db->query("
+        SELECT
+            p.*,
+            vp.id AS varian_id,
+            vp.ukuran,
+            vp.stok
+        FROM produk p
+        INNER JOIN varian_produk vp
+            ON p.id = vp.produk_id
+        ORDER BY p.created_at DESC
+    ");
+
         return $this->db->resultSet();
     }
 
@@ -85,6 +96,25 @@ class Produk
         return $this->db->single();
     }
 
+    public function getProdukVarianById($varian_id)
+    {
+        $this->db->query("
+        SELECT
+            p.*,
+            vp.id AS varian_id,
+            vp.ukuran,
+            vp.stok
+        FROM produk p
+        INNER JOIN varian_produk vp
+            ON p.id = vp.produk_id
+        WHERE vp.id = :id
+    ");
+
+        $this->db->bind(':id', $varian_id);
+
+        return $this->db->single();
+    }
+
     /**
      * Mengambil total stok produk dari semua varian
      */
@@ -105,18 +135,30 @@ class Produk
      */
     public function searchProduk($keyword)
     {
-        $this->db->query(
-            "SELECT p.*, k.nama AS kategori, COALESCE(SUM(vp.stok), 0) AS stok_total
-             FROM " . $this->table . " p
-             LEFT JOIN kategori k ON p.kategori_id = k.id
-             LEFT JOIN varian_produk vp ON p.id = vp.produk_id
-             WHERE p.nama LIKE :keyword
-                OR k.nama LIKE :keyword
-                OR p.deskripsi LIKE :keyword
-             GROUP BY p.id
-             ORDER BY p.created_at DESC"
-        );
+        $this->db->query("
+        SELECT
+            p.*,
+            k.nama AS kategori,
+            vp.id AS varian_id,
+            vp.ukuran,
+            vp.stok
+        FROM produk p
+        INNER JOIN kategori k
+            ON p.kategori_id = k.id
+        INNER JOIN varian_produk vp
+            ON p.id = vp.produk_id
+
+        WHERE
+            p.nama LIKE :keyword
+            OR p.deskripsi LIKE :keyword
+            OR k.nama LIKE :keyword
+            OR vp.ukuran LIKE :keyword
+
+        ORDER BY p.created_at DESC
+    ");
+
         $this->db->bind(':keyword', '%' . $keyword . '%');
+
         return $this->db->resultSet();
     }
 
@@ -240,12 +282,10 @@ class Produk
      */
     public function deleteProduk($id)
     {
-        // Hapus varian produk terlebih dahulu
         $this->db->query('DELETE FROM varian_produk WHERE produk_id = :produk_id');
         $this->db->bind(':produk_id', $id);
         $this->db->execute();
 
-        // Hapus produk
         $this->db->query('DELETE FROM ' . $this->table . ' WHERE id = :id');
         $this->db->bind(':id', $id);
 

@@ -16,7 +16,11 @@ class CategoryController extends Controller
     public function index()
     {
         $data['judul'] = 'Categories | Luxe Academy';
-        $data['kategori'] = $this->model('Kategori')->getAllKategori();
+        if (isset($_GET['search'])) {
+            $data['kategori'] = $this->model('Kategori')->searchKategori($_GET['search']);
+        } else {
+            $data['kategori'] = $this->model('Kategori')->getAllKategori();
+        }
 
         $this->view('penjual/layout/header', $data);
         $this->view('penjual/kategori/index', $data);
@@ -34,14 +38,54 @@ class CategoryController extends Controller
         $this->view('templates/footer');
     }
 
+    private function validateCategory(array $data, $id = null)
+    {
+        $errors = [];
+
+        if (trim($data['nama'] ?? '') === '') {
+            $errors[] = 'Nama kategori wajib diisi.';
+        }
+
+        if (strlen($data['nama']) > 50) {
+            $errors[] = 'Nama kategori maksimal 50 karakter.';
+        }
+
+        $kategoriModel = $this->model('Kategori');
+
+        if ($id === null) {
+            if ($kategoriModel->kategoriExists($data['nama'])) {
+                $errors[] = 'Nama kategori sudah digunakan.';
+            }
+        } else {
+            if ($kategoriModel->kategoriExistsExceptId($data['nama'], $id)) {
+                $errors[] = 'Nama kategori sudah digunakan.';
+            }
+        }
+
+
+        return $errors;
+    }
+
     public function store()
     {
-        if ($this->model('Kategori')->createKategori($_POST) > 0) {
-            Flasher::setFlash('Category successfully', 'created', 'success');
-            header('Location: ' . BASE_URL . '/dashboard/categories');
+        $data = [
+            'nama' => trim($_POST['nama'] ?? '')
+        ];
+
+        $errors = $this->validateCategory($data);
+
+        if (!empty($errors)) {
+            Flasher::setFlash(
+                implode(' ', $errors),
+                'Kategori',
+                'danger'
+            );
+
+            header('Location: ' . BASE_URL . '/dashboard/categories/add');
             exit;
         } else {
-            Flasher::setFlash('Failed to create', 'category', 'danger');
+            $this->model('Kategori')->createKategori($data);
+            Flasher::setFlash('Category successfully', 'created', 'success');
             header('Location: ' . BASE_URL . '/dashboard/categories');
             exit;
         }
@@ -50,7 +94,7 @@ class CategoryController extends Controller
     public function create()
     {
         $data['judul'] = 'Add New Category | Luxe Academy';
-        
+
         $this->view('penjual/layout/header', $data);
         $this->view('penjual/kategori/create', $data);
         $this->view('penjual/layout/footer', $data);
@@ -60,7 +104,7 @@ class CategoryController extends Controller
     {
         $data['judul'] = 'Edit Category | Luxe Academy';
         $data['kategori'] = $this->model('Kategori')->getKategoriById($id);
-        
+
         $this->view('penjual/layout/header', $data);
         $this->view('penjual/kategori/edit', $data);
         $this->view('penjual/layout/footer', $data);
@@ -68,11 +112,25 @@ class CategoryController extends Controller
 
     public function update()
     {
-        if ($this->model('Kategori')->updateKategori($_POST['id'], $_POST) > 0) {
-            Flasher::setFlash('Category successfully', 'updated', 'success');
-            header('Location: ' . BASE_URL . '/dashboard/categories');
+        $data = [
+            'nama' => trim($_POST['nama'] ?? '')
+        ];
+
+        $id = $_POST['id'];
+
+        $errors = $this->validateCategory($data, $id);
+
+        if (!empty($errors)) {
+            Flasher::setFlash(
+                implode(' ', $errors),
+                'Kategori',
+                'danger'
+            );
+
+            header('Location: ' . BASE_URL . '/dashboard/categories/edit/' . $id);
             exit;
         } else {
+            $this->model('Kategori')->updateKategori($id, $data);
             Flasher::setFlash('Failed to update', 'category', 'danger');
             header('Location: ' . BASE_URL . '/dashboard/categories');
             exit;

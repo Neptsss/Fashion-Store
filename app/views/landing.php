@@ -19,17 +19,15 @@
     <div class="container" style="background: linear-gradient(135deg, rgba(6, 82, 214, 0.05) 0%, rgba(175, 201, 255, 0.1) 100%); border-radius: 15px; margin-top: 50px;">
         <h2 class="section-title" style="text-align: center; margin-bottom: 30px;">Jelajahi Kategori</h2>
         <div class="kategori">
-            <a href="<?= BASE_URL . '/products?kategori=1'; ?>" class="kategori-badge shirt">
-                T-Shirt
-            </a>
-            <a href="<?= BASE_URL . '/products?kategori=2'; ?>" class="kategori-badge hat">
-               Hat
-            </a>
-            <a href="<?= BASE_URL . '/products?kategori=3'; ?>" class="kategori-badge jeans">
-                Jeans
-            </a>
+            <?php foreach ($kategori as $kat): ?>
+                <a href="<?= BASE_URL . '/products?kategori=' . $kat['id']; ?>" class="kategori-badge <?= strtolower($kat['nama']); ?>">
+                    <?= $kat['nama']; ?>
+                </a>
+            <?php endforeach; ?>
         </div>
     </div>
+
+
 
 <div class="container" style="padding-top: 60px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
@@ -46,7 +44,7 @@
                     <?php if ($count < 6) : ?>
                         <div class="card">
                             <div class="card-image">
-                                <img src="https://picsum.photos/300/300?random=<?= $item['id']; ?>" alt="<?= $item['nama']; ?>">
+                                <img src="<?=BASE_URL.'/images/products/'. $item['foto']; ?>" alt="<?= $item['nama']; ?>">
                             </div>
                             <div class="card-body">
                                 <p class="card-title"><?= $item['nama']; ?></p>

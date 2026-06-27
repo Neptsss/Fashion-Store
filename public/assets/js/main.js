@@ -12,12 +12,42 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     const flashMessage = document.querySelector('#flashMessage');
-    console.log(flashMessage);
 
     if (flashMessage) {
         setTimeout(() => {
             closeToast();
         }, 4000);
+    }
+
+    const editPhotoButton = document.getElementById('editPhotoButton');
+    const photoModal = document.getElementById('photoModal');
+    const closePhotoModal = document.getElementById('closePhotoModal');
+    const cancelPhotoModal = document.getElementById('cancelPhotoModal');
+
+    if (editPhotoButton && photoModal) {
+        editPhotoButton.addEventListener('click', () => {
+            photoModal.classList.add('open');
+        });
+    }
+
+    if (closePhotoModal && photoModal) {
+        closePhotoModal.addEventListener('click', () => {
+            photoModal.classList.remove('open');
+        });
+    }
+
+    if (cancelPhotoModal && photoModal) {
+        cancelPhotoModal.addEventListener('click', () => {
+            photoModal.classList.remove('open');
+        });
+    }
+
+    if (photoModal) {
+        photoModal.addEventListener('click', (event) => {
+            if (event.target === photoModal) {
+                photoModal.classList.remove('open');
+            }
+        });
     }
 }); 
 

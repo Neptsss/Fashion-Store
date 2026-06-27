@@ -47,7 +47,6 @@ class DashboardModel
         $this->db->query($query);
         $result = $this->db->resultSet();
 
-        //Data 12 bulan
         $chartData = array_fill(0, 12, 0);
         foreach ($result as $row) {
             $chartData[$row['bulan'] - 1] = (int) $row['total'];

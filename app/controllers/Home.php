@@ -6,20 +6,25 @@ use App\Core\Controller;
 
 class Home extends Controller
 {
-    private $produkModel;
-    public function __construct()
+    public function index()
     {
-        $this->produkModel = $this->model('produk');
-    }
-    public function index($id = null)
-    {
-        $produk = $this->produkModel->getProdukLimit(6);
+        $data['judul'] = 'Daftar Produk | Stellar & Co.';
+        $produkModel = $this->model('Produk');
+        $kategoriModel = $this->model('Kategori');
 
-        $this->view('templates/header', [
-            'judul' => "Home | Stellar & Co"
-        ]);
+        $data['kategori'] = $kategoriModel->getAllKategori();
+
+        if (isset($_GET['kategori'])) {
+            $data['produk'] = $produkModel->getProdukByKategori($_GET['kategori']);
+        } elseif (isset($_GET['keyword'])) {
+            $data['produk'] = $produkModel->searchProduk($_GET['keyword']);
+        } else {
+            $data['produk'] = $produkModel->getAllProduk();
+        }
+
+        $this->view('templates/header', $data);
         $this->view('partials/navbar');
-        $this->view('landing', ['produk' => $produk]);
+        $this->view('landing', $data);
         $this->view('templates/footer');
     }
 }

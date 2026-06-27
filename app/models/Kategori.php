@@ -23,6 +23,14 @@ class Kategori
         return $this->db->single();
     }
 
+    public function searchKategori($search)
+    {
+        $this->db->query("SELECT * FROM " . $this->table . " WHERE nama LIKE :search");
+        $this->db->bind('search', '%' . $search . '%');
+        return $this->db->resultSet();
+    }
+
+
     public function getAllKategori()
     {
         $this->db->query('SELECT * FROM ' . $this->table);
@@ -59,5 +67,32 @@ class Kategori
         $this->db->bind('id', $id);
         $this->db->execute();
         return $this->db->rowCount();
+    }
+
+    public function kategoriExists($nama)
+    {
+        $this->db->query("
+        SELECT id
+        FROM kategori
+        WHERE LOWER(nama) = LOWER(:nama)
+    ");
+
+        $this->db->bind('nama', $nama);
+
+        return $this->db->single();
+    }
+    public function kategoriExistsExceptId($nama, $id)
+    {
+        $this->db->query("
+        SELECT id
+        FROM kategori
+        WHERE LOWER(nama) = LOWER(:nama)
+        AND id != :id
+    ");
+
+        $this->db->bind('nama', $nama);
+        $this->db->bind('id', $id);
+
+        return $this->db->single();
     }
 }

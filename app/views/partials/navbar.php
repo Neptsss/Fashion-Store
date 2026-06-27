@@ -19,30 +19,36 @@
                 </ul>
             </div>
             <div class="nav-container">
-                <form action="" method="get">
+                <form action="<?= BASE_URL; ?>/products" method="get">
                     <div class="input-icon">
-                        <i class="bi bi-search"></i>
-                        <input type="text" name="keyword" placeholder="Search Collection" class="input-control" value="<?= (isset($_GET['keyword'])) ? $_GET['keyword'] : ''; ?>">
+                        <input type="text" name="keyword" value="<?= htmlspecialchars($_GET['keyword'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="Search Collection" class="input-control">
                     </div>
                 </form>
                 <div class="nav-menu">
-                    <p id="profile"><i class="bi bi-person-circle"></i></p>
+                    <?php $profilePhoto = !empty($_SESSION['foto'])
+                        ? BASE_URL . '/images/users/' . htmlspecialchars($_SESSION['foto'], ENT_QUOTES, 'UTF-8')
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($_SESSION['nama_lengkap']) . '&background=0652d6&color=fff&size=150'; ?>
+                    <img src="<?= $profilePhoto; ?>" alt="Foto Profil" class="nav-profile-img" id="profile">
                 </div>
             </div>
         </div>
         <div class="profile-menu" id="profile-menu">
             <ul class="profile-item">
+
                 <?php if (isset($_SESSION['username'])): ?>
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'Penjual'): ?>
                         <li>
                             <a href="<?= BASE_URL; ?>/dashboard">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="<?= BASE_URL; ?>/profile/<?= $_SESSION['username']; ?>">Profile</a>
                         </li>
                     <?php else: ?>
                         <li>
                             <a href="<?= BASE_URL; ?>/profile/<?= $_SESSION['username']; ?>">Profile</a>
                         </li>
                         <li>
-                            <a href="">History</a>
+                            <a href="<?= BASE_URL; ?>/profile/<?= $_SESSION['username']; ?>/history">History</a>
                         </li>
                     <?php endif; ?>
                     <li>

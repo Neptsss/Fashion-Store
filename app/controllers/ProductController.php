@@ -8,13 +8,15 @@ class ProductController extends Controller
 {
     public function index()
     {
+       
         $data['judul'] = 'Daftar Produk | Stellar & Co.';
         $produkModel = $this->model('Produk');
-
-        // Cek apakah ada filter kategori
+        $kategoriModel = $this->model('Kategori');
+        $data['kategori'] = $kategoriModel->getAllKategori();
         if (isset($_GET['kategori'])) {
             $data['produk'] = $produkModel->getProdukByKategori($_GET['kategori']);
         } elseif (isset($_GET['keyword'])) {
+            
             $data['produk'] = $produkModel->searchProduk($_GET['keyword']);
         } else {
             $data['produk'] = $produkModel->getAllProduk();
@@ -145,7 +147,6 @@ class ProductController extends Controller
         $produkId = $produkModel->createProduk($dataProduk);
 
         if ($produkId) {
-            // Jika ada data varian, tambahkan varian
             if (!empty($_POST['ukuran']) && !empty($_POST['stok'])) {
                 $varianModel = $this->model('VarianProduk');
                 $ukuranArray = $_POST['ukuran'];
@@ -203,7 +204,6 @@ class ProductController extends Controller
         $produkModel = $this->model('Produk');
         $produkLama = $produkModel->getProdukById($_POST['id']);
 
-        // Handle image upload
         if ($_FILES['foto']['error'] === 4) {
             $gambar = $produkLama['foto'];
         } else {
@@ -227,7 +227,6 @@ class ProductController extends Controller
         ];
 
         if ($produkModel->updateProduk($_POST['id'], $dataProduk)) {
-            // Update varian jika ada
             if (!empty($_POST['ukuran']) && !empty($_POST['stok'])) {
                 $varianModel = $this->model('VarianProduk');
                 $ukuranArray = $_POST['ukuran'];
@@ -239,7 +238,6 @@ class ProductController extends Controller
                             'ukuran' => $ukuran,
                             'stok' => (int)$stokArray[$index]
                         ];
-                        // Jika ada varian_id, update; jika tidak, buat baru
                         if (isset($_POST['varian_id'][$index])) {
                             $varianModel->update($_POST['varian_id'][$index], $dataVarian);
                         } else {
@@ -260,31 +258,7 @@ class ProductController extends Controller
     }
 
    
-    public function hapus($id)
-    {
-        $produkModel = $this->model('Produk');
-        $produk = $produkModel->getProdukById($id);
-
-        if ($produk && $produkModel->deleteProduk($id)) {
-            if ($produk['foto']) {
-                $path = __DIR__ . '/../../public/images/products/' . $produk['foto'];
-                if (file_exists($path)) {
-                    unlink($path);
-                }
-            }
-
-            \App\Core\Flasher::setFlash('Produk berhasil dihapus!', 'Produk','Sucess');
-        } else {
-            \App\Core\Flasher::setFlash('Gagal menghapus produk!', 'Produk', 'danger');
-        }
-
-        header('Location: ' . BASE_URL . '/products');
-        exit;
-    }
-
-    /**
-     * Hapus varian produk
-     */
+   
     public function hapusVarian($varian_id)
     {
         $varianModel = $this->model('VarianProduk');
@@ -298,5 +272,150 @@ class ProductController extends Controller
 
         header('Location: ' . BASE_URL . '/products');
         exit;
+    }
+
+    /**
+     * Proses checkout - Simpan pesanan ke database
+     */
+    public function prosesCheckout()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . '/products');
+            exit;
+        }
+
+        if (!isset($_SESSION['user_id'])) {
+            \App\Core\Flasher::setFlash('Silakan login terlebih dahulu!', 'Produk', 'warning');
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+
+        $produkModel = $this->model('Produk');
+        $varianModel = $this->model('VarianProduk');
+        $pesananModel = $this->model('Pesanan');
+        $detailPesananModel = $this->model('Detail_Pesanan');
+
+        $produk_id = $_POST['produk_id'] ?? null;
+        $varian_id = $_POST['varian_id'] ?? null;
+        $quantity = (int)($_POST['quantity'] ?? 1);
+        $harga = (float)($_POST['harga'] ?? 0);
+        $bukti_bayar = $_FILES['bukti_bayar'] ?? null;
+
+        if (!$produk_id || $quantity < 1 || $harga < 0) {
+            \App\Core\Flasher::setFlash('Data pesanan tidak valid!', 'Produk', 'danger');
+            header('Location: ' . BASE_URL . '/products');
+            exit;
+        }
+
+        if ($varian_id) {
+            $varian = $varianModel->getById($varian_id);
+            if (!$varian) {
+                \App\Core\Flasher::setFlash('Varian produk tidak ditemukan!', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/products');
+                exit;
+            }
+
+            if ($varian['stok'] < $quantity) {
+                \App\Core\Flasher::setFlash('Stok varian tidak mencukupi!', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/products');
+                exit;
+            }
+        }
+
+        $bukti_filename = null;
+        if ($bukti_bayar && $bukti_bayar['error'] === 0) {
+            $bukti_filename = $this->uploadPaymentProof($bukti_bayar);
+            if (!$bukti_filename) {
+                \App\Core\Flasher::setFlash('Format bukti pembayaran tidak valid!', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/products');
+                exit;
+            }
+        }
+
+        $sub_total = $harga * $quantity;
+        $ongkir = 15000; 
+        $total_harga = $sub_total + $ongkir;
+
+        $dataPesanan = [
+            'user_id' => $_SESSION['user_id'],
+            'total_harga' => $total_harga,
+            'bukti_pembayaran' => $bukti_filename,
+            'status' => 'Diproses'
+        ];
+
+        $pesanan_id = $pesananModel->create($dataPesanan);
+
+        if ($pesanan_id) {
+            $dataDetailPesanan = [
+                'pesanan_id' => $pesanan_id,
+                'varian_id' => $varian_id,
+                'quantity' => $quantity,
+                'harga_satuan' => $harga,
+                'sub_total' => $sub_total
+            ];
+
+            $detail_id = $detailPesananModel->create($dataDetailPesanan);
+
+           
+            if ($detail_id) {
+                if ($varian_id) {
+                $varianModel->reduceStock($varian_id, $quantity);
+                 
+                }
+
+                \App\Core\Flasher::setFlash('Pesanan berhasil dibuat! Silakan tunggu konfirmasi admin.', 'Produk', 'success');
+                header('Location: ' . BASE_URL . '/profile/' . urlencode($_SESSION['username']) . '/history');
+                exit;
+            } else {
+                $pesananModel->delete($pesanan_id);
+                \App\Core\Flasher::setFlash('Gagal membuat detail pesanan!', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/products');
+                exit;
+            }
+        } else {
+            \App\Core\Flasher::setFlash('Gagal membuat pesanan!', 'Produk', 'danger');
+            header('Location: ' . BASE_URL . '/products');
+            exit;
+        }
+    }
+
+    /**
+     * Upload bukti pembayaran
+     */
+    private function uploadPaymentProof($file)
+    {
+        $namaFile = $file['name'] ?? '';
+        $ukuranFile = $file['size'] ?? 0;
+        $error = $file['error'] ?? 4;
+        $tmpName = $file['tmp_name'] ?? '';
+
+        if ($error === 4) {
+            return false;
+        }
+
+        $ekstensiValid = ['jpg', 'jpeg', 'png'];
+        $pecahNamaFile = explode('.', $namaFile);
+        $ekstensi = strtolower(end($pecahNamaFile));
+
+        if (!in_array($ekstensi, $ekstensiValid)) {
+            return false;
+        }
+
+        if ($ukuranFile > 2000000) {
+            return false;
+        }
+
+        $namaFileBaru = 'bukti_' . uniqid() . '.' . $ekstensi;
+        $uploadPath = __DIR__ . '/../../public/images/payments/';
+
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        if (move_uploaded_file($tmpName, $uploadPath . $namaFileBaru)) {
+            return $namaFileBaru;
+        }
+
+        return false;
     }
 }
