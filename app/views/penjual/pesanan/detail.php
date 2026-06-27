@@ -25,7 +25,7 @@
                             <td>
                                 <div class="product-cell">
                                     <?php if($dp['foto']): ?>
-                                        <img src="<?= BASE_URL ?>/images/<?= $dp['foto'] ?>" alt="<?= $dp['nama_produk'] ?>" class="product-img">
+                                        <img src="<?= BASE_URL ?>/images/products/<?= $dp['foto'] ?>" alt="<?= $dp['nama_produk'] ?>" class="product-img">
                                     <?php else: ?>
                                         <div class="product-img" style="display: flex; align-items: center; justify-content: center; background: #eee;">
                                             <i class="bi bi-image text-muted"></i>
@@ -78,7 +78,7 @@
             <div class="table-container" style="padding: 24px;">
                 <h3 style="margin-bottom: 20px; font-size: 16px; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Bukti Pembayaran</h3>
                 <?php if($data['pesanan']['bukti_pembayaran']): ?>
-                    <a href="<?= BASE_URL ?>/images/<?= $data['pesanan']['bukti_pembayaran'] ?>" target="_blank" style="display: block; text-align: center; background: #f8fafc; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px dashed var(--border-color);">
+                    <a href="<?= BASE_URL ?>/images/payments/<?= $data['pesanan']['bukti_pembayaran'] ?>" target="_blank" style="display: block; text-align: center; background: #f8fafc; padding: 20px; border-radius: 8px; text-decoration: none; border: 1px dashed var(--border-color);">
                         <i class="bi bi-file-earmark-image" style="font-size: 32px; color: var(--text-muted);"></i>
                         <p style="margin-top: 10px; font-size: 14px; color: var(--primary-color);">Lihat Bukti Pembayaran</p>
                     </a>

@@ -24,7 +24,6 @@
         </div>
     </div>
 
-    <!-- Chart Section -->
     <div class="table-container" style="padding: 24px;">
         <h3 style="margin-bottom: 20px; font-size: 16px; color: var(--text-main);">Grafik Penjualan Bulanan (Tahun <?= date('Y') ?>)</h3>
         <canvas id="salesChart" height="100"></canvas>

@@ -13,24 +13,10 @@
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card" style="margin-bottom: 40px;">
             <h3>Total Produk</h3>
             <div class="value"><?= count($data['produk']) ?></div>
         </div>
-        <div class="stat-card">
-            <h3>Stok Aktif</h3>
-            <div class="value blue">85%</div>
-        </div>
-        <div class="stat-card">
-            <h3>Peringatan Stok Rendah</h3>
-            <div class="value red">12</div>
-        </div>
-        <div class="stat-card">
-            <h3>Baru Bulan Ini</h3>
-            <div class="value">48</div>
-        </div>
-    </div>
 
     <div class="table-container">
         <table class="custom-table">
@@ -38,6 +24,7 @@
                 <tr>
                     <th>Nama Produk</th>
                     <th>Kategori</th>
+                    <th>Ukuran</th>
                     <th>Stok</th>
                     <th>Harga</th>
                     <th>Aksi</th>
@@ -48,8 +35,8 @@
                     <tr>
                         <td>
                             <div class="product-cell">
-                                <img src="<?= BASE_URL; ?>/images/<?= $p['foto'] ?>" alt="<?= $p['nama'] ?>"
-                                    class="product-img" onerror="this.src=''">
+                                <img src="<?= BASE_URL . '/images/products/' . $p['foto']; ?>" alt="<?= $p['nama'] ?>"
+                                    class="product-img">
                                 <div class="product-info">
                                     <h4><?= $p['nama'] ?></h4>
                                     <p>ID: LX-<?= sprintf('%05d', $p['id']) ?></p>
@@ -69,16 +56,19 @@
                             <span class="badge-category"><?= $kat_nama ?></span>
                         </td>
                         <td>
-                            <?= !empty($p['stok']) && $p['stok'] > 0 ? $p['stok'] : 'Habis'; ?>
+                            <?= !empty($p['ukuran']) ? $p['ukuran'] : 'N/A'; ?>
+                        </td>
+                        <td>
+                            <?= htmlspecialchars($p['stok'] ?? '-'); ?>
                         </td>
                         <td>
                             <span class="price">Rp <?= number_format($p['harga'], 0, ',', '.') ?></span>
                         </td>
                         <td>
                             <div class="actions">
-                                <a href="<?= BASE_URL; ?>/dashboard/products/edit/<?= $p['id'] ?>" class="btn-icon"><i
+                                <a href="<?= BASE_URL; ?>/dashboard/products/edit/<?= $p['varian_id'] ?>" class="btn-icon"><i
                                         class="bi bi-pencil"></i></a>
-                                <a href="<?= BASE_URL; ?>/dashboard/products/delete/<?= $p['id'] ?>" class="btn-icon delete"
+                                <a href="<?= BASE_URL; ?>/dashboard/products/delete/<?= $p['varian_id'] ?>" class="btn-icon delete"
                                     onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')"><i
                                         class="bi bi-trash"></i></a>
                             </div>
@@ -97,11 +87,8 @@
             <div class="pagination-info">
                 Menampilkan <?= count($data['produk']) ?> hasil
             </div>
-            <div class="pagination-controls">
-                <a href="#" class="page-btn"><i class="bi bi-chevron-left"></i></a>
-                <a href="#" class="page-btn active">1</a>
-                <a href="#" class="page-btn"><i class="bi bi-chevron-right"></i></a>
-            </div>
+              
+            
         </div>
-    </div>
+</div>
 </div iv>
