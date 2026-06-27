@@ -10,46 +10,95 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="nama_lengkap">Nama Lengkap</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-input" placeholder="Masukkan nama" required>
+                    <label for="nama_lengkap">
+                        Nama Lengkap <span style="color:red;">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="nama_lengkap"
+                        name="nama_lengkap"
+                        class="form-input"
+                        placeholder="Masukkan nama"
+                        value="<?= htmlspecialchars($_POST['nama_lengkap'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                        required>
                 </div>
 
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" class="form-input" placeholder="Buat username" required>
+                    <label for="username">
+                        Username <span style="color:red;">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        class="form-input"
+                        placeholder="Buat username"
+                        value="<?= htmlspecialchars($_POST['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                        required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-input" placeholder="Masukkan email aktif" required>
+                <label for="email">
+                    Email <span style="color:red;">*</span>
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="Masukkan email aktif"
+                    value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                    required>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">
+                        Password <span style="color:red;">*</span>
+                    </label>
                     <div class="input-wrapper">
-                        <input type="password" id="password" name="password" class="form-input" placeholder="Buat password" required>
-                        <i class="bi bi-eye toggle-password" id="togglePassword"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Buat password"
+                            required>
+                        <i class="bi bi-eye-slash toggle-password" id="togglePassword"></i>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="confirm_password">Konfirmasi Password</label>
+                    <label for="confirm_password">
+                        Konfirmasi Password <span style="color:red;">*</span>
+                    </label>
                     <div class="input-wrapper">
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Ulangi password" required>
-                        <i class="bi bi-eye toggle-password" id="toggleConfirmPassword"></i>
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            class="form-input"
+                            placeholder="Ulangi password"
+                            required>
+                        <i class="bi bi-eye-slash toggle-password" id="toggleConfirmPassword"></i>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">Daftar Sekarang</button>
+            <button type="submit" class="btn btn-primary btn-block">
+                Daftar Sekarang
+            </button>
 
         </form>
 
         <div class="auth-footer">
-            <p>Sudah punya akun? <a href="<?= BASE_URL.'/login'; ?>">Masuk di sini</a></p>
+            <p>Sudah punya akun?
+                <a href="<?= BASE_URL . '/login'; ?>">Masuk di sini</a>
+            </p>
         </div>
 
     </div>
 </div>
+
+<script src="<?= BASE_URL; ?>/assets/js/auth.js"></script>

@@ -43,4 +43,28 @@ class User
 
         return true;
     }
+
+    public function updateUser($id, $data)
+    {
+        $query = 'UPDATE ' . $this->table . ' SET nama_lengkap = :nama_lengkap, telp = :telp, alamat = :alamat';
+
+        if (array_key_exists('foto', $data) && $data['foto'] !== null) {
+            $query .= ', foto = :foto';
+        }
+
+        $query .= ' WHERE id = :id';
+
+        $this->db->query($query);
+        $this->db->bind('nama_lengkap', $data['nama_lengkap']);
+        $this->db->bind('telp', $data['telp']);
+        $this->db->bind('alamat', $data['alamat']);
+
+        if (array_key_exists('foto', $data) && $data['foto'] !== null) {
+            $this->db->bind('foto', $data['foto']);
+        }
+
+        $this->db->bind('id', $id);
+
+        return $this->db->execute();
+    }
 }
