@@ -4,14 +4,14 @@
     <div class="hero">
         <div class="hero-body">
             <p class="hero-text">Koleksi Terbaru Kami</p>
-            <h1 class="hero-title">Academic Excellence In Every Stitch</h1>
+            <h1 class="hero-title">Definisikan Ulang Gaya Pribadimu</h1>
             <p class="hero-desc">
                 Temukan produk berkualitas tinggi yang sempurna untuk kebutuhan akademis dan gaya hidup Anda. Dengan desain modern dan bahan premium, kami siap mendampingi setiap momen berhargamu.
             </p>
             <a href="<?= BASE_URL . '/products'; ?>" class="btn btn-primary">Belanja Sekarang</a>
         </div>
         <div class="hero-image">
-            <img src="https://picsum.photos/500/400?random=1" alt="Hero Product">
+            <img src="<?= BASE_URL.'/images/hero_image.jpg'; ?>" alt="Hero Product">
         </div>
     </div>
 
@@ -29,7 +29,7 @@
 
 
 
-<div class="container" style="padding-top: 60px;">
+    <div class="container" style="padding-top: 60px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
             <h2 class="section-title product">Produk Terbaru</h2>
             <a href="<?= BASE_URL . '/products'; ?>" style="color: var(--primary-color); text-decoration: none; font-weight: 500; transition: all 0.3s ease;">
@@ -44,12 +44,12 @@
                     <?php if ($count < 6) : ?>
                         <div class="card">
                             <div class="card-image">
-                                <img src="<?=BASE_URL.'/images/products/'. $item['foto']; ?>" alt="<?= $item['nama']; ?>">
+                                <img src="<?= BASE_URL . '/images/products/' . $item['foto']; ?>" alt="<?= $item['nama']; ?>">
                             </div>
                             <div class="card-body">
                                 <p class="card-title"><?= $item['nama']; ?></p>
                                 <p class="card-subtitle">Rp <?= number_format($item['harga'], 0, ',', '.'); ?></p>
-                                <p cl   ass="card-desc"><?= strlen($item['deskripsi']) > 50 ? substr($item['deskripsi'], 0, 50) . '...' : $item['deskripsi']; ?></p>
+                                <p cl ass="card-desc"><?= strlen($item['deskripsi']) > 50 ? substr($item['deskripsi'], 0, 50) . '...' : $item['deskripsi']; ?></p>
                                 <hr>
                                 <div class="btn-card">
                                     <a href="<?= BASE_URL . '/detail/' . $item['id']; ?>">Lihat Detail</a>
@@ -68,5 +68,3 @@
             <a href="<?= BASE_URL . '/products'; ?>" class="btn btn-primary">Lihat Semua Produk</a>
         </div>
     </div>
-
-   

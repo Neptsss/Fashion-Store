@@ -58,24 +58,45 @@ class ProductController extends Controller
     }
 
     /**
-     * Checkout produk dengan varian
+     * Checkout produk dengan varian atau multi-item
      */
-    public function checkout($produk_id, $qty, $varian_id = null, $size = null)
+    public function checkout($produk_id = null, $qty = null, $varian_id = null, $size = null)
     {
         $produkModel = $this->model('Produk');
-        $varianModel = $this->model('VarianProduk');
-
         $data['judul'] = 'Checkout Product | Stellar & Co.';
-        $data['produk'] = $produkModel->getProdukById($produk_id);
 
-        if ($varian_id) {
-            $data['varian'] = $varianModel->getById($varian_id);
-            $data['ukuran'] = $data['varian']['ukuran'];
-        } else {
-            $data['ukuran'] = $size;
+        $productVariants = $produkModel->getAllProduk();
+        foreach ($productVariants as &$item) {
+            if (!isset($item['produk_id']) && isset($item['id'])) {
+                $item['produk_id'] = $item['id'];
+            }
+            if (empty($item['foto'])) {
+                $item['foto'] = 'https://picsum.photos/100/100?random=' . ($item['produk_id'] ?? rand(1, 999));
+            }
         }
+        unset($item);
+        $data['productVariants'] = $productVariants;
+        $data['prefillItem'] = null;
 
-        $data['qty'] = $qty;
+        $queryProductId = $produk_id ?? ($_GET['product_id'] ?? null);
+        $queryVarianId = $varian_id ?? ($_GET['varian_id'] ?? null);
+        $queryQty = $qty ?? ($_GET['qty'] ?? 1);
+
+        if ($queryVarianId) {
+            $variant = $produkModel->getProdukVarianById($queryVarianId);
+            if ($variant) {
+                $data['prefillItem'] = [
+                    'produk_id' => $variant['produk_id'] ?? $queryProductId,
+                    'varian_id' => $variant['varian_id'],
+                    'nama' => $variant['nama'],
+                    'foto' => $variant['foto'] ?: 'https://picsum.photos/100/100',
+                    'ukuran' => $variant['ukuran'],
+                    'stok' => $variant['stok'],
+                    'harga' => $variant['harga'],
+                    'quantity' => max(1, min((int)$queryQty, $variant['stok']))
+                ];
+            }
+        }
 
         $this->view('templates/header', $data);
         $this->view('partials/navbar');
@@ -295,31 +316,55 @@ class ProductController extends Controller
         $pesananModel = $this->model('Pesanan');
         $detailPesananModel = $this->model('Detail_Pesanan');
 
-        $produk_id = $_POST['produk_id'] ?? null;
-        $varian_id = $_POST['varian_id'] ?? null;
-        $quantity = (int)($_POST['quantity'] ?? 1);
-        $harga = (float)($_POST['harga'] ?? 0);
+        $productIds = $_POST['product_id'] ?? [];
+        $varianIds = $_POST['varian_id'] ?? [];
+        $quantities = $_POST['quantity'] ?? [];
         $bukti_bayar = $_FILES['bukti_bayar'] ?? null;
 
-        if (!$produk_id || $quantity < 1 || $harga < 0) {
+        if (!is_array($productIds) || !is_array($varianIds) || !is_array($quantities)) {
             \App\Core\Flasher::setFlash('Data pesanan tidak valid!', 'Produk', 'danger');
-            header('Location: ' . BASE_URL . '/products');
+            header('Location: ' . BASE_URL . '/checkout');
             exit;
         }
 
-        if ($varian_id) {
-            $varian = $varianModel->getById($varian_id);
-            if (!$varian) {
+        $items = [];
+        foreach ($varianIds as $index => $varian_id) {
+            $varian_id = $varian_id ?? null;
+            $quantity = (int)($quantities[$index] ?? 0);
+
+            if (!$varian_id || $quantity < 1) {
+                continue;
+            }
+
+            $variant = $varianModel->getWithProduk($varian_id);
+            if (!$variant) {
                 \App\Core\Flasher::setFlash('Varian produk tidak ditemukan!', 'Produk', 'danger');
-                header('Location: ' . BASE_URL . '/products');
+                header('Location: ' . BASE_URL . '/checkout');
                 exit;
             }
 
-            if ($varian['stok'] < $quantity) {
-                \App\Core\Flasher::setFlash('Stok varian tidak mencukupi!', 'Produk', 'danger');
-                header('Location: ' . BASE_URL . '/products');
+            if ($variant['stok'] < $quantity) {
+                \App\Core\Flasher::setFlash('Stok varian ' . htmlspecialchars($variant['ukuran']) . ' tidak mencukupi!', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/checkout');
                 exit;
             }
+
+            $harga = (float)$variant['harga'];
+            $sub_total = $harga * $quantity;
+
+            $items[] = [
+                'produk_id' => $variant['produk_id'],
+                'varian_id' => $varian_id,
+                'quantity' => $quantity,
+                'harga' => $harga,
+                'sub_total' => $sub_total
+            ];
+        }
+
+        if (empty($items)) {
+            \App\Core\Flasher::setFlash('Silakan pilih minimal satu produk.', 'Checkout', 'danger');
+            header('Location: ' . BASE_URL . '/checkout');
+            exit;
         }
 
         $bukti_filename = null;
@@ -327,14 +372,14 @@ class ProductController extends Controller
             $bukti_filename = $this->uploadPaymentProof($bukti_bayar);
             if (!$bukti_filename) {
                 \App\Core\Flasher::setFlash('Format bukti pembayaran tidak valid!', 'Produk', 'danger');
-                header('Location: ' . BASE_URL . '/products');
+                header('Location: ' . BASE_URL . '/checkout');
                 exit;
             }
         }
 
-        $sub_total = $harga * $quantity;
-        $ongkir = 15000; 
-        $total_harga = $sub_total + $ongkir;
+        $subTotal = array_sum(array_column($items, 'sub_total'));
+        $ongkir = 15000;
+        $total_harga = $subTotal + $ongkir;
 
         $dataPesanan = [
             'user_id' => $_SESSION['user_id'],
@@ -345,38 +390,43 @@ class ProductController extends Controller
 
         $pesanan_id = $pesananModel->create($dataPesanan);
 
-        if ($pesanan_id) {
+        if (!$pesanan_id) {
+            \App\Core\Flasher::setFlash('Gagal membuat pesanan!', 'Produk', 'danger');
+            header('Location: ' . BASE_URL . '/checkout');
+            exit;
+        }
+
+        $createdDetails = false;
+        foreach ($items as $item) {
             $dataDetailPesanan = [
                 'pesanan_id' => $pesanan_id,
-                'varian_id' => $varian_id,
-                'quantity' => $quantity,
-                'harga_satuan' => $harga,
-                'sub_total' => $sub_total
+                'varian_id' => $item['varian_id'],
+                'quantity' => $item['quantity'],
+                'harga_satuan' => $item['harga'],
+                'sub_total' => $item['sub_total']
             ];
 
             $detail_id = $detailPesananModel->create($dataDetailPesanan);
-
-           
-            if ($detail_id) {
-                if ($varian_id) {
-                $varianModel->reduceStock($varian_id, $quantity);
-                 
-                }
-
-                \App\Core\Flasher::setFlash('Pesanan berhasil dibuat! Silakan tunggu konfirmasi admin.', 'Produk', 'success');
-                header('Location: ' . BASE_URL . '/profile/' . urlencode($_SESSION['username']) . '/history');
-                exit;
-            } else {
+            if (!$detail_id || !$varianModel->reduceStock($item['varian_id'], $item['quantity'])) {
+                $detailPesananModel->deleteByPesananId($pesanan_id);
                 $pesananModel->delete($pesanan_id);
-                \App\Core\Flasher::setFlash('Gagal membuat detail pesanan!', 'Produk', 'danger');
-                header('Location: ' . BASE_URL . '/products');
+                \App\Core\Flasher::setFlash('Gagal memproses salah satu item pesanan.', 'Produk', 'danger');
+                header('Location: ' . BASE_URL . '/checkout');
                 exit;
             }
-        } else {
-            \App\Core\Flasher::setFlash('Gagal membuat pesanan!', 'Produk', 'danger');
-            header('Location: ' . BASE_URL . '/products');
+            $createdDetails = true;
+        }
+
+        if ($createdDetails) {
+            \App\Core\Flasher::setFlash('Pesanan berhasil dibuat! Silakan tunggu konfirmasi admin.', 'Produk', 'success');
+            header('Location: ' . BASE_URL . '/profile/' . urlencode($_SESSION['username']) . '/history');
             exit;
         }
+
+        $pesananModel->delete($pesanan_id);
+        \App\Core\Flasher::setFlash('Gagal membuat detail pesanan!', 'Produk', 'danger');
+        header('Location: ' . BASE_URL . '/checkout');
+        exit;
     }
 
     /**

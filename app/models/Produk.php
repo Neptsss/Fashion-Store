@@ -100,6 +100,7 @@ class Produk
     {
         $this->db->query("
         SELECT
+            p.id AS produk_id,
             p.*,
             vp.id AS varian_id,
             vp.ukuran,

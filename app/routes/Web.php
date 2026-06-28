@@ -30,6 +30,7 @@ class Web extends Route
         // Product
         $this->get('/products', [ProductController::class, 'index']);
         $this->get('/detail/{id}', [ProductController::class, 'detail']);
+        $this->get('/checkout', [ProductController::class, 'checkout'], ['auth', 'pembeli']);
         $this->get('/checkout/{id}/{qty}/{varian}', [ProductController::class, 'checkout'], ['auth', 'pembeli']);
         $this->post('/proses-checkout', [ProductController::class, 'prosesCheckout'], ['auth', 'pembeli']);
 
