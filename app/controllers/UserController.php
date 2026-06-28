@@ -136,6 +136,7 @@ class UserController extends Controller
 
     public function updateProfile($username = null)
     {
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . '/profile/' . urlencode($username));
             exit;
@@ -173,24 +174,15 @@ class UserController extends Controller
         }
 
         if ($_SESSION['role'] === 'Pembeli') {
-
-            if (empty($data['telp'])) {
-                Flasher::setFlash(
-                    'Nomor telepon wajib diisi.',
-                    'Update Profil',
-                    'danger'
-                );
-
-                header('Location: ' . BASE_URL . '/profile/' . urlencode($username));
-                exit;
-            }
-
+            
+            if(!empty($data['telp'])){
             if (!ctype_digit($data['telp'])) {
                 Flasher::setFlash(
                     'Nomor telepon hanya boleh berisi angka.',
                     'Update Profil',
                     'danger'
                 );
+               
 
                 header('Location: ' . BASE_URL . '/profile/' . urlencode($username));
                 exit;
@@ -206,20 +198,14 @@ class UserController extends Controller
                 header('Location: ' . BASE_URL . '/profile/' . urlencode($username));
                 exit;
             }
-
-            if (empty($data['alamat'])) {
-                Flasher::setFlash(
-                    'Alamat wajib diisi.',
-                    'Update Profil',
-                    'danger'
-                );
-
-                header('Location: ' . BASE_URL . '/profile/' . urlencode($username));
-                exit;
             }
+
+          
         }
+      
 
         $uploadedImage = $this->uploadProfileImage();
+        
         if ($uploadedImage === false) {
             Flasher::setFlash(
                 'Foto profil tidak valid. Pastikan file merupakan gambar JPG atau PNG dengan ukuran maksimal 2 MB.',

@@ -131,7 +131,7 @@ class CategoryController extends Controller
             exit;
         } else {
             $this->model('Kategori')->updateKategori($id, $data);
-            Flasher::setFlash('Failed to update', 'category', 'danger');
+            Flasher::setFlash('Update success', 'category', 'success');
             header('Location: ' . BASE_URL . '/dashboard/categories');
             exit;
         }
